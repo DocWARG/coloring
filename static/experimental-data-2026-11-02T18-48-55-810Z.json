@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-11-02T18:48:55.810Z",
+  "product": {
+    "name": "Эпоксидная грунт-эмаль",
+    "purpose": "Для гладких металлических поверхностей"
+  },
+  "testConditions": {
+    "surfacePreparation": "Обезжиривание + обеспыливание",
+    "dryFilmThicknessMicrometers": {
+      "min": 80,
+      "max": 90
+    },
+    "curingBeforeTest": {
+      "mode": "Нанесение в +20 градусов цельсия",
+      "duration": "14 суток"
+    }
+  },
+  "variants": [
+    {
+      "id": 1,
+      "name": "Вариант № 1",
+      "mainCompositionExperiment": "Старт",
+      "status": "неудачный",
+      "conclusion": "Крошится при надрезе, недостаток эластичности"
+    },
+    {
+      "id": 2,
+      "name": "Вариант № 2",
+      "mainCompositionExperiment": 0,
+      "status": "частично удачный",
+      "conclusion": "Хрупкость стала меньше, но адгезия хуже"
+    }
+  ],
+  "mainComposition": {
+    "components": [
+      {
+        "id": 1,
+        "name": "SM601x75",
+        "massPercentByVariant": {
+          "1": 30,
+          "2": 28
+        }
+      },
+      {
+        "id": 13,
+        "name": "ХП-470А",
+        "massPercentByVariant": {
+          "1": 0,
+          "2": 5.5
+        }
+      },
+      {
+        "id": 2,
+        "name": "716s",
+        "massPercentByVariant": {
+          "1": 0.3,
+          "2": 0.2
+        }
+      },
+      {
+        "id": 3,
+        "name": "CFC 192",
+        "massPercentByVariant": {
+          "1": 0.3,
+          "2": 0.3
+        }
+      },
+      {
+        "id": 4,
+        "name": "SILAST LT-560",
+        "massPercentByVariant": {
+          "1": 0.7,
+          "2": 1.5
+        }
+      },
+      {
+        "id": 5,
+        "name": "Фосфат цинка",
+        "massPercentByVariant": {
+          "1": 7.5,
+          "2": 6.5
+        }
+      },
+      {
+        "id": 6,
+        "name": "ТН-15",
+        "massPercentByVariant": {
+          "1": 15,
+          "2": 22
+        }
+      },
+      {
+        "id": 7,
+        "name": "МИБАРИ 01-96 / М5",
+        "massPercentByVariant": {
+          "1": 12.3,
+          "2": 6.3
+        }
+      },
+      {
+        "id": 8,
+        "name": "318M",
+        "massPercentByVariant": {
+          "1": 0.3,
+          "2": 0.3
+        }
+      },
+      {
+        "id": 9,
+        "name": "588 TYR",
+        "massPercentByVariant": {
+          "1": 8,
+          "2": 8
+        }
+      },
+      {
+        "id": 10,
+        "name": "Thixatrol PM 8058",
+        "massPercentByVariant": {
+          "1": 0.6,
+          "2": 0.6
+        }
+      },
+      {
+        "id": 11,
+        "name": "Бутанол",
+        "massPercentByVariant": {
+          "1": 5,
+          "2": 3.5
+        }
+      },
+      {
+        "id": 12,
+        "name": "Ксилол",
+        "massPercentByVariant": {
+          "1": 20,
+          "2": 17.3
+        }
+      }
+    ],
+    "totalMassPercentByVariant": {
+      "1": 99.99999999999999,
+      "2": 99.99999999999999
+    }
+  },
+  "hardener": {
+    "components": [
+      {
+        "id": 1,
+        "name": "Cardolite NC-562",
+        "massPercentByVariant": {
+          "1": 75,
+          "2": 75
+        }
+      },
+      {
+        "id": 2,
+        "name": "Drocure 5176",
+        "massPercentByVariant": {
+          "1": 10,
+          "2": 10
+        }
+      },
+      {
+        "id": 3,
+        "name": "DMP-30",
+        "massPercentByVariant": {
+          "1": 10,
+          "2": 10
+        }
+      },
+      {
+        "id": 4,
+        "name": "Ксилол",
+        "massPercentByVariant": {
+          "1": 5,
+          "2": 5
+        }
+      }
+    ],
+    "totalMassPercentByVariant": {
+      "1": 100,
+      "2": 100
+    }
+  },
+  "experiments": [
+    {
+      "id": 1,
+      "attribute": "Адгезия",
+      "material": "ГК шероховатая сталь",
+      "method": "Отрыв",
+      "standard": "ГОСТ 32299",
+      "norm": ">5 МПа",
+      "indicatorsByVariant": {
+        "1": "8,66",
+        "2": "7.4"
+      }
+    },
+    {
+      "id": 2,
+      "attribute": "Адгезия",
+      "material": "ХК гладкая",
+      "method": "Решетчатые надрезы",
+      "standard": "ГОСТ 31149",
+      "norm": "0-1 балл",
+      "indicatorsByVariant": {
+        "1": "2-3 балла",
+        "2": "1-2"
+      }
+    },
+    {
+      "id": 3,
+      "attribute": "Адгезия",
+      "material": "Нержавейка гладкая",
+      "method": "Решетчатые надрезы",
+      "standard": "ГОСТ 31149",
+      "norm": "0-1 балл",
+      "indicatorsByVariant": {
+        "1": "1-2 балла",
+        "2": "1-2"
+      }
+    },
+    {
+      "id": 4,
+      "attribute": "Адгезия",
+      "material": "Алюминий гладкий",
+      "method": "Решетчатые надрезы",
+      "standard": "ГОСТ 31149",
+      "norm": "0-1 балл",
+      "indicatorsByVariant": {
+        "1": "1-2 балла",
+        "2": "3"
+      }
+    },
+    {
+      "id": 5,
+      "attribute": "Адгезия",
+      "material": "Оцинковка гладкая",
+      "method": "Решетчатые надрезы",
+      "standard": "ГОСТ 31149",
+      "norm": "0-1 балл",
+      "indicatorsByVariant": {
+        "1": "2-3 балла",
+        "2": "3"
+      }
+    }
+  ]
+}

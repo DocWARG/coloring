@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>Лист испытаний · Лаборатория покрытий</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f7f2;
+      --ink: #202820;
+      --muted: #737b70;
+      --line: #d7ddd2;
+      --green: #245c43;
+      --green-pale: #d8eadc;
+      --yellow: #f7e9a8;
+      --red: #f4d0c8;
+      --white: #fff;
+      --focus: #26734d;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      font-synthesis: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(38, 70, 47, .035) 32px);
+      font-size: 15px;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .page { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-mark { width: 10px; height: 10px; background: var(--green); border-radius: 2px; transform: rotate(45deg); }
+    .server-status { display: inline-flex; align-items: center; gap: 7px; text-transform: none; font-weight: 500; }
+    .server-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #4a925f; }
+    .topline-actions { display: flex; align-items: center; gap: 12px; }
+    .export-button { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px; border: 1px solid #bac8b8; border-radius: 3px; background: transparent; color: var(--green); font-size: 11px; font-weight: 700; text-transform: none; cursor: pointer; }
+    .export-button:hover { border-color: var(--green); background: #e9eee5; }
+    .file-menu { position: relative; }
+    .file-menu > summary { list-style: none; }
+    .file-menu > summary::-webkit-details-marker { display: none; }
+    .file-menu-items { position: absolute; top: calc(100% + 5px); right: 0; z-index: 20; display: grid; min-width: 190px; padding: 4px; border: 1px solid var(--line); border-radius: 3px; background: var(--white); box-shadow: 0 5px 16px rgba(32,40,32,.12); }
+    .file-menu-items button, .file-menu-items a { display: block; width: 100%; padding: 9px 10px; border: 0; border-radius: 2px; background: transparent; color: var(--ink); font: inherit; font-size: 12px; text-align: left; text-decoration: none; cursor: pointer; }
+    .file-menu-items button:hover, .file-menu-items a:hover { background: #edf0e9; color: var(--green); }
+    .import-file { display: none; }
+
+    header { padding: 46px 0 34px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 9px; color: var(--green); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    h1 { margin: 0; font: 400 42px/1.1 Georgia, "Times New Roman", serif; letter-spacing: 0; }
+    .intro { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+
+    section { padding: 30px 0 32px; border-bottom: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; }
+    .section-number { color: #8b967f; font: 16px Georgia, serif; }
+    h2 { margin: 0; font: 400 23px/1.2 Georgia, "Times New Roman", serif; letter-spacing: 0; }
+    .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; }
+    .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+    .field label { color: #485348; font-size: 12px; font-weight: 700; }
+    .field label span { color: var(--muted); font-weight: 400; }
+
+    input[type="text"], input[type="number"] {
+      width: 100%; min-width: 0; height: 42px; padding: 0 12px;
+      border: 1px solid #cbd3c7; border-radius: 3px; outline: none;
+      background: rgba(255,255,255,.82); color: var(--ink);
+      transition: border-color .15s, box-shadow .15s, background .15s;
+    }
+    input:focus { border-color: var(--focus); box-shadow: 0 0 0 3px rgba(38,115,77,.12); background: var(--white); }
+    input::placeholder { color: #a0a79d; }
+
+    .range-fields { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; }
+    .range-dash { color: var(--muted); }
+
+    .history-section { padding-bottom: 44px; }
+    .history-heading { align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .history-heading .section-heading { margin: 0; }
+    .subsection-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 0; }
+    h3 { margin: 0; color: #485348; font: 400 17px/1.2 Georgia, "Times New Roman", serif; letter-spacing: 0; }
+    .table-actions { display: flex; gap: 9px; }
+    .action-button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 38px; padding: 0 13px; border: 1px solid #bac8b8;
+      border-radius: 3px; background: transparent; color: var(--green);
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .action-button:hover { border-color: var(--green); background: #e9eee5; }
+    .action-button.primary { border-color: var(--green); background: var(--green); color: white; }
+    .action-button.primary:hover { background: #194b35; }
+    .plus { font-size: 18px; line-height: 12px; font-weight: 400; }
+
+    .table-wrap { width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin-top: 20px; border: 1px solid var(--line); border-radius: 3px; background: rgba(255,255,255,.72); }
+    table { width: 100%; min-width: 650px; border-collapse: collapse; table-layout: fixed; }
+    .variant-table { min-width: 650px; }
+    .experiment-table { min-width: 940px; }
+    th, td { padding: 10px 12px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    thead th { height: 50px; background: #edf0e9; color: #4c594c; font-size: 11px; font-weight: 700; }
+    thead th:first-child { width: 230px; }
+    .variant-heading { display: flex; align-items: center; gap: 6px; }
+    .variant-heading input { height: 30px; padding: 0 8px; border-color: transparent; background: transparent; font-size: 12px; font-weight: 700; }
+    .variant-heading input:focus { border-color: var(--focus); }
+    .delete-variant, .delete-component {
+      display: inline-grid; flex: 0 0 auto; place-items: center; width: 28px; height: 28px;
+      border: 0; border-radius: 3px; background: transparent; color: #7d857b; cursor: pointer;
+      font-size: 17px; line-height: 1;
+    }
+    .delete-variant:hover, .delete-component:hover { background: #f6e5df; color: #a43c2d; }
+    tbody td { height: 56px; }
+    .component-cell { display: flex; align-items: center; gap: 4px; }
+    .drag-handle { flex: 0 0 auto; width: 26px; height: 32px; border: 0; border-radius: 3px; background: transparent; color: #788477; cursor: grab; font-size: 15px; }
+    .drag-handle:hover { background: #e9eee5; color: var(--green); }
+    .drag-handle:active { cursor: grabbing; }
+    .component-row.dragging, .hardener-row.dragging { opacity: .45; }
+    .component-row.drag-target td:first-child, .hardener-row.drag-target td:first-child { box-shadow: inset 0 2px var(--green); }
+    .component-name { height: 36px !important; padding: 0 8px !important; }
+    .percent-cell { display: flex; align-items: center; gap: 8px; }
+    .percent-cell input { height: 36px; text-align: right; }
+    .unit { flex: 0 0 auto; color: var(--muted); font-size: 11px; }
+    .experiment-row td { height: 68px; background: #f5f6f0; border-bottom: 0; }
+    .experiment-label { color: #485348; font-size: 12px; font-weight: 700; }
+    .experiment-input { height: 42px !important; }
+    .variant-label { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .experiment-cell { display: flex; align-items: center; gap: 5px; }
+    .experiment-cell input { height: 36px; padding: 0 8px; }
+    .experiment-cell .delete-component { flex: 0 0 auto; }
+    .experiment-summary-label { color: #485348; font-size: 12px; font-weight: 700; }
+    .status-select { display: block; width: 100%; min-width: 0; max-width: 100%; height: 38px; padding: 0 6px; border: 1px solid #cbd3c7; border-radius: 3px; background: var(--white); color: var(--ink); font-size: 12px; }
+    .conclusion-input { width: 100%; min-width: 0; min-height: 68px; padding: 8px; border: 1px solid #cbd3c7; border-radius: 3px; background: rgba(255,255,255,.82); color: var(--ink); font: inherit; line-height: 1.35; resize: vertical; }
+    .conclusion-input:focus { border-color: var(--focus); outline: none; box-shadow: 0 0 0 3px rgba(38,115,77,.12); background: var(--white); }
+
+    tfoot td { height: 62px; border-top: 2px solid #aeb9aa; border-bottom: 0; background: #edf0e9; }
+    tfoot td:first-child { font-size: 12px; font-weight: 700; }
+    .total-box { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 38px; padding: 0 9px; border-radius: 3px; font-variant-numeric: tabular-nums; }
+    .total-box strong { font-size: 14px; }
+    .total-box span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .total-box.under { background: var(--yellow); color: #65551c; }
+    .total-box.exact { background: var(--green-pale); color: #235a39; }
+    .total-box.over { background: var(--red); color: #81382c; }
+    .empty-state { padding: 25px; color: var(--muted); text-align: center; font-size: 13px; }
+
+    footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px 0 30px; color: var(--muted); font-size: 11px; }
+
+    @media (max-width: 650px) {
+      .page { width: min(100% - 32px, 560px); }
+      header { padding: 34px 0 26px; }
+      h1 { font-size: 34px; }
+      section { padding: 25px 0 27px; }
+      .field-grid { grid-template-columns: 1fr; gap: 17px; }
+      .history-heading { align-items: flex-start; }
+      .history-heading .section-heading { width: 100%; }
+      .table-actions { width: 100%; }
+      .action-button { flex: 1; padding: 0 8px; }
+      .subsection-heading { align-items: flex-start; flex-direction: column; }
+      .subsection-heading .action-button { align-self: flex-start; flex: 0 0 auto; }
+      .topline-actions { gap: 6px; }
+      .topline-actions .server-status { display: none; }
+      .export-button { gap: 4px; padding: 0 6px; font-size: 10px; }
+      thead th:first-child { width: 165px; }
+      th, td { padding: 8px; }
+      footer { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Лаборатория покрытий</span></div>
+      <div class="topline-actions">
+        <span class="server-status">Рабочий лист</span>
+        <details class="file-menu" id="import-menu">
+          <summary class="export-button"><span aria-hidden="true">↑</span> Импорт</summary>
+          <div class="file-menu-items">
+            <button id="import-json" type="button">JSON-файл</button>
+            <button id="import-excel" type="button">Excel (.xlsx)</button>
+          </div>
+        </details>
+        <details class="file-menu" id="export-menu">
+          <summary class="export-button"><span aria-hidden="true">↓</span> Экспорт</summary>
+          <div class="file-menu-items">
+            <button id="export-json" type="button">JSON</button>
+            <button id="export-excel" type="button">Excel (.xlsx)</button>
+            <a href="/experimental-data-template.xlsx" download>Шаблон Excel</a>
+          </div>
+        </details>
+        <input class="import-file" id="import-json-file" type="file" accept=".json,application/json,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Выбрать файл для импорта">
+      </div>
+    </div>
+
+    <header>
+      <p class="eyebrow">Исследования · лакокрасочные материалы</p>
+      <h1>Лист испытаний</h1>
+      <p class="intro">Данные продукта, условия и составы экспериментальных вариантов</p>
+    </header>
+
+    <main>
+      <section aria-labelledby="product-title">
+        <div class="section-heading"><span class="section-number">01</span><h2 id="product-title">Продукт</h2></div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="product-name">Название продукта</label>
+            <input id="product-name" type="text" placeholder="Например, эмаль защитная" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="product-purpose">Назначение продукта</label>
+            <input id="product-purpose" type="text" placeholder="Например, защита стальных конструкций" autocomplete="off">
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="conditions-title">
+        <div class="section-heading"><span class="section-number">02</span><h2 id="conditions-title">Условия испытаний</h2></div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="surface-preparation">Подготовка поверхности</label>
+            <input id="surface-preparation" type="text" placeholder="Способ и степень очистки" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Толщина сухой пленки <span>(мкм)</span></label>
+            <div class="range-fields">
+              <input id="film-min" type="number" min="0" step="1" placeholder="От" aria-label="Минимальная толщина сухой пленки, мкм">
+              <span class="range-dash" aria-hidden="true">—</span>
+              <input id="film-max" type="number" min="0" step="1" placeholder="До" aria-label="Максимальная толщина сухой пленки, мкм">
+            </div>
+          </div>
+          <div class="field">
+            <label for="curing-mode">Отверждение до испытания · режим</label>
+            <input id="curing-mode" type="text" placeholder="Температура, влажность и другие условия" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="curing-duration">Отверждение до испытания · срок</label>
+            <input id="curing-duration" type="text" placeholder="Например, 7 суток" autocomplete="off">
+          </div>
+        </div>
+      </section>
+
+      <section class="history-section" aria-labelledby="history-title">
+        <div class="history-heading">
+          <div class="section-heading"><span class="section-number">03</span><h2 id="history-title">Основной состав</h2></div>
+          <div class="table-actions">
+            <button class="action-button" id="add-component" type="button"><span class="plus" aria-hidden="true">+</span> Добавить компонент основного состава</button>
+            <button class="action-button primary" id="add-variant" type="button"><span class="plus" aria-hidden="true">+</span> Добавить вариант</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table id="history-table" class="variant-table">
+            <thead><tr id="table-head"></tr></thead>
+            <tbody id="table-body"></tbody>
+            <tfoot><tr id="totals-row"></tr></tfoot>
+          </table>
+        </div>
+
+        <div class="subsection-heading">
+          <h3>Отвердитель</h3>
+          <button class="action-button" id="add-hardener" type="button"><span class="plus" aria-hidden="true">+</span> Добавить компонент отвердителя</button>
+        </div>
+        <div class="table-wrap" id="hardener-wrap">
+          <table id="hardener-table" class="variant-table">
+            <thead><tr id="hardener-head"></tr></thead>
+            <tbody id="hardener-body"></tbody>
+            <tfoot id="hardener-totals"></tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="experiments-title">
+        <div class="history-heading">
+          <div class="section-heading"><span class="section-number">04</span><h2 id="experiments-title">Эксперименты</h2></div>
+          <button class="action-button primary" id="add-experiment" type="button"><span class="plus" aria-hidden="true">+</span> Добавить эксперимент</button>
+        </div>
+        <div class="table-wrap" id="experiments-wrap">
+          <table id="experiments-table" class="experiment-table">
+            <thead><tr id="experiments-head"></tr></thead>
+            <tbody id="experiments-body"></tbody>
+            <tfoot id="experiments-summary"></tfoot>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>Экспериментальные данные</span><span>Итоги составов рассчитаны отдельно по вариантам</span></footer>
+  </div>
+
+  <script>
+    (() => {
+      let nextComponentId = 1;
+      let nextVariantId = 2;
+      let nextHardenerId = 1;
+      let nextExperimentId = 2;
+      const components = [];
+      const variants = [{ id: 1, name: "Вариант № 1", experiment: "" }];
+      const hardeners = [];
+      const experimentFields = [
+        ["attribute", "Атрибут"],
+        ["material", "Материал"],
+        ["method", "Метод эксперимента"],
+        ["standard", "Стандарт"],
+        ["norm", "Норма"]
+      ];
+      const experiments = [{ id: 1, attribute: "", material: "", method: "", standard: "", norm: "", results: {} }];
+      const tableHead = document.getElementById("table-head");
+      const tableBody = document.getElementById("table-body");
+      const totalsRow = document.getElementById("totals-row");
+      const historyTable = document.getElementById("history-table");
+      const hardenerHead = document.getElementById("hardener-head");
+      const hardenerBody = document.getElementById("hardener-body");
+      const hardenerTotals = document.getElementById("hardener-totals");
+      const hardenerTable = document.getElementById("hardener-table");
+      const experimentsHead = document.getElementById("experiments-head");
+      const experimentsBody = document.getElementById("experiments-body");
+      const experimentsSummary = document.getElementById("experiments-summary");
+      const experimentsTable = document.getElementById("experiments-table");
+
+      function createCell(tagName, className, parent) {
+        const cell = document.createElement(tagName);
+        if (className) cell.className = className;
+        parent.append(cell);
+        return cell;
+      }
+
+      function addPercentCell(row, component, variant) {
+        const cell = createCell("td", "", row);
+        const wrapper = createCell("div", "percent-cell", cell);
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = "0";
+        input.step = "0.01";
+        input.inputMode = "decimal";
+        input.value = component.values[variant.id] || "";
+        input.setAttribute("aria-label", `${component.name || "Компонент"}, ${variant.name}, % масс.`);
+        input.addEventListener("input", () => {
+          component.values[variant.id] = input.value;
+          updateTotals();
+        });
+        wrapper.append(input);
+        const unit = createCell("span", "unit", wrapper);
+        unit.textContent = "% масс.";
+      }
+
+      function render() {
+        tableHead.replaceChildren();
+        tableBody.replaceChildren();
+        totalsRow.replaceChildren();
+        historyTable.style.width = `${Math.max(650, 230 + variants.length * 220)}px`;
+
+        createCell("th", "", tableHead).textContent = "Компонент";
+        variants.forEach((variant) => {
+          const heading = createCell("th", "", tableHead);
+          const wrapper = createCell("div", "variant-heading", heading);
+          const nameInput = document.createElement("input");
+          nameInput.type = "text";
+          nameInput.value = variant.name;
+          nameInput.setAttribute("aria-label", `Название варианта ${variant.id}`);
+          nameInput.addEventListener("input", () => {
+            variant.name = nameInput.value;
+            updatePercentLabels();
+            updateVariantLabels();
+          });
+          wrapper.append(nameInput);
+          if (variants.length > 1) {
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "delete-variant";
+            remove.title = `Удалить ${variant.name}`;
+            remove.setAttribute("aria-label", `Удалить ${variant.name}`);
+            remove.textContent = "×";
+            remove.addEventListener("click", () => {
+              variants.splice(variants.indexOf(variant), 1);
+              components.forEach((component) => delete component.values[variant.id]);
+              hardeners.forEach((item) => delete item.values[variant.id]);
+              experiments.forEach((item) => delete item.results[variant.id]);
+              render();
+            });
+            wrapper.append(remove);
+          }
+        });
+
+        components.forEach((component) => {
+          const row = createCell("tr", "component-row", tableBody);
+          row.draggable = true;
+          row.dataset.componentId = component.id;
+          row.addEventListener("dragstart", (event) => {
+            if (!event.target.closest(".drag-handle")) {
+              event.preventDefault();
+              return;
+            }
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", String(component.id));
+            row.classList.add("dragging");
+          });
+          row.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            row.classList.add("drag-target");
+          });
+          row.addEventListener("dragleave", () => row.classList.remove("drag-target"));
+          row.addEventListener("drop", (event) => {
+            event.preventDefault();
+            row.classList.remove("drag-target");
+            reorderItem(components, event.dataTransfer.getData("text/plain"), component.id, event.clientY, row, render);
+          });
+          row.addEventListener("dragend", () => {
+            tableBody.querySelectorAll(".component-row").forEach((item) => item.classList.remove("dragging", "drag-target"));
+          });
+          const nameCell = createCell("td", "", row);
+          const nameWrapper = createCell("div", "component-cell", nameCell);
+          const dragHandle = document.createElement("button");
+          dragHandle.type = "button";
+          dragHandle.className = "drag-handle";
+          dragHandle.draggable = true;
+          dragHandle.title = "Перетащить для изменения порядка";
+          dragHandle.setAttribute("aria-label", `Перетащить компонент ${component.name || component.id}`);
+          dragHandle.textContent = "⠿";
+          nameWrapper.append(dragHandle);
+          const nameInput = document.createElement("input");
+          nameInput.type = "text";
+          nameInput.className = "component-name";
+          nameInput.value = component.name;
+          nameInput.placeholder = "Название компонента";
+          nameInput.setAttribute("aria-label", `Название компонента ${component.id}`);
+          nameInput.addEventListener("input", () => {
+            component.name = nameInput.value;
+            updatePercentLabels();
+          });
+          nameWrapper.append(nameInput);
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "delete-component";
+          remove.title = "Удалить компонент";
+          remove.setAttribute("aria-label", "Удалить компонент");
+          remove.textContent = "×";
+          remove.addEventListener("click", () => {
+            components.splice(components.indexOf(component), 1);
+            render();
+          });
+          nameWrapper.append(remove);
+          variants.forEach((variant) => addPercentCell(row, component, variant));
+        });
+
+        const experimentRow = createCell("tr", "experiment-row", tableBody);
+        createCell("td", "experiment-label", experimentRow).textContent = "Суть эксперимента";
+        variants.forEach((variant) => {
+          const cell = createCell("td", "", experimentRow);
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "experiment-input";
+          input.value = variant.experiment;
+          input.setAttribute("aria-label", `Суть эксперимента: ${variant.name}`);
+          input.addEventListener("input", () => { variant.experiment = input.value; });
+          cell.append(input);
+        });
+
+        createCell("td", "", totalsRow).textContent = "Итого по компонентам";
+        variants.forEach((variant) => {
+          const cell = createCell("td", "", totalsRow);
+          const box = createCell("div", "total-box under", cell);
+          const value = createCell("strong", "", box);
+          const status = createCell("span", "", box);
+          box.dataset.variantId = variant.id;
+          box.dataset.valueTarget = "true";
+          value.textContent = "0,00%";
+          status.textContent = "до 100%";
+        });
+        updateTotals();
+        renderHardener();
+        renderExperiments();
+      }
+
+      function updatePercentLabels() {
+        tableBody.querySelectorAll("tr:not(.experiment-row)").forEach((row, componentIndex) => {
+          const component = components[componentIndex];
+          row.querySelectorAll(".percent-cell input").forEach((input, variantIndex) => {
+            input.setAttribute("aria-label", `${component.name || "Компонент"}, ${variants[variantIndex].name}, % масс.`);
+          });
+        });
+        tableBody.querySelectorAll(".experiment-input").forEach((input, index) => {
+          input.setAttribute("aria-label", `Суть эксперимента: ${variants[index].name}`);
+        });
+      }
+
+      function renderHardener() {
+        hardenerHead.replaceChildren();
+        hardenerBody.replaceChildren();
+        hardenerTotals.replaceChildren();
+        hardenerTable.style.width = `${Math.max(650, 230 + variants.length * 220)}px`;
+        createCell("th", "", hardenerHead).textContent = "Компонент отвердителя";
+        variants.forEach((variant) => {
+          const heading = createCell("th", "", hardenerHead);
+          const label = createCell("span", "variant-label", heading);
+          label.textContent = variant.name;
+        });
+
+        hardeners.forEach((item) => {
+          const row = createCell("tr", "hardener-row", hardenerBody);
+          row.draggable = true;
+          row.dataset.hardenerId = item.id;
+          row.addEventListener("dragstart", (event) => {
+            if (!event.target.closest(".drag-handle")) {
+              event.preventDefault();
+              return;
+            }
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", String(item.id));
+            row.classList.add("dragging");
+          });
+          row.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            row.classList.add("drag-target");
+          });
+          row.addEventListener("dragleave", () => row.classList.remove("drag-target"));
+          row.addEventListener("drop", (event) => {
+            event.preventDefault();
+            row.classList.remove("drag-target");
+            reorderItem(hardeners, event.dataTransfer.getData("text/plain"), item.id, event.clientY, row, renderHardener);
+          });
+          row.addEventListener("dragend", () => {
+            hardenerBody.querySelectorAll(".hardener-row").forEach((currentRow) => currentRow.classList.remove("dragging", "drag-target"));
+          });
+          const nameCell = createCell("td", "", row);
+          const wrapper = createCell("div", "component-cell", nameCell);
+          const dragHandle = document.createElement("button");
+          dragHandle.type = "button";
+          dragHandle.className = "drag-handle";
+          dragHandle.draggable = true;
+          dragHandle.title = "Перетащить для изменения порядка";
+          dragHandle.setAttribute("aria-label", `Перетащить компонент отвердителя ${item.name || item.id}`);
+          dragHandle.textContent = "⠿";
+          wrapper.append(dragHandle);
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "component-name";
+          input.value = item.name;
+          input.placeholder = "Название компонента";
+          input.setAttribute("aria-label", `Название компонента отвердителя ${item.id}`);
+          input.addEventListener("input", () => { item.name = input.value; });
+          wrapper.append(input);
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "delete-component";
+          remove.title = "Удалить компонент отвердителя";
+          remove.setAttribute("aria-label", "Удалить компонент отвердителя");
+          remove.textContent = "×";
+          remove.addEventListener("click", () => {
+            hardeners.splice(hardeners.indexOf(item), 1);
+            renderHardener();
+          });
+          wrapper.append(remove);
+          variants.forEach((variant) => {
+            const cell = createCell("td", "", row);
+            const percent = createCell("div", "percent-cell", cell);
+            const amount = document.createElement("input");
+            amount.type = "number";
+            amount.min = "0";
+            amount.step = "0.01";
+            amount.inputMode = "decimal";
+            amount.value = item.values[variant.id] || "";
+            amount.setAttribute("aria-label", `${item.name || "Отвердитель"}, ${variant.name}, % масс.`);
+            amount.addEventListener("input", () => {
+              item.values[variant.id] = amount.value;
+              updateHardenerTotals();
+            });
+            percent.append(amount);
+            createCell("span", "unit", percent).textContent = "% масс.";
+          });
+        });
+
+        const mixingRow = createCell("tr", "", hardenerTotals);
+        createCell("td", "experiment-summary-label", mixingRow).textContent = "Смешение отвердителя на 100 частей основы";
+        variants.forEach((variant) => {
+          const cell = createCell("td", "", mixingRow);
+          const input = document.createElement("input");
+          input.type = "number";
+          input.min = "0";
+          input.step = "any";
+          input.className = "mixing-ratio-input";
+          input.value = variant.mixingRatio || "";
+          input.setAttribute("aria-label", `Смешение отвердителя на 100 частей основы, ${variant.name}`);
+          input.addEventListener("input", () => { variant.mixingRatio = input.value; });
+          cell.append(input);
+        });
+
+        const totalRow = createCell("tr", "", hardenerTotals);
+        createCell("td", "", totalRow).textContent = "Итог по отвердителю";
+        variants.forEach((variant) => {
+          const cell = createCell("td", "", totalRow);
+          const box = createCell("div", "total-box under", cell);
+          createCell("strong", "", box);
+          createCell("span", "", box);
+          box.dataset.hardenerVariantId = variant.id;
+        });
+        updateHardenerTotals();
+      }
+
+      function renderExperiments() {
+        experimentsHead.replaceChildren();
+        experimentsBody.replaceChildren();
+        experimentsSummary.replaceChildren();
+        experimentsTable.style.width = `${Math.max(940, 740 + variants.length * 190)}px`;
+        experimentFields.forEach(([, label]) => {
+          createCell("th", "", experimentsHead).textContent = label;
+        });
+        variants.forEach((variant) => {
+          const heading = createCell("th", "", experimentsHead);
+          const label = createCell("span", "variant-label", heading);
+          label.textContent = `Показатели: ${variant.name}`;
+        });
+
+        experiments.forEach((experiment) => {
+          const row = createCell("tr", "", experimentsBody);
+          experimentFields.forEach(([key, label], index) => {
+            const cell = createCell("td", "", row);
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = experiment[key];
+            input.setAttribute("aria-label", label);
+            input.addEventListener("input", () => { experiment[key] = input.value; });
+            cell.append(input);
+            if (index === 0) {
+              const remove = document.createElement("button");
+              remove.type = "button";
+              remove.className = "delete-component";
+              remove.title = "Удалить эксперимент";
+              remove.setAttribute("aria-label", "Удалить эксперимент");
+              remove.textContent = "×";
+              remove.addEventListener("click", () => {
+                experiments.splice(experiments.indexOf(experiment), 1);
+                renderExperiments();
+              });
+              cell.prepend(remove);
+              cell.classList.add("experiment-cell");
+            }
+          });
+          variants.forEach((variant) => {
+            const cell = createCell("td", "", row);
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = experiment.results[variant.id] || "";
+            input.setAttribute("aria-label", `Показатель ${variant.name}`);
+            input.addEventListener("input", () => { experiment.results[variant.id] = input.value; });
+            cell.append(input);
+          });
+        });
+
+        const statusRow = createCell("tr", "", experimentsSummary);
+        const statusLabel = createCell("td", "experiment-summary-label", statusRow);
+        statusLabel.colSpan = experimentFields.length;
+        statusLabel.textContent = "Статус варианта";
+        variants.forEach((variant) => {
+          const cell = createCell("td", "", statusRow);
+          const select = document.createElement("select");
+          select.className = "status-select";
+          select.setAttribute("aria-label", `Статус ${variant.name}`);
+          ["удачный", "неудачный", "частично удачный"].forEach((status) => {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            select.append(option);
+          });
+          select.value = variant.status || "удачный";
+          variant.status = select.value;
+          select.addEventListener("change", () => { variant.status = select.value; });
+          cell.append(select);
+        });
+
+        const conclusionRow = createCell("tr", "", experimentsSummary);
+        const conclusionLabel = createCell("td", "experiment-summary-label", conclusionRow);
+        conclusionLabel.colSpan = experimentFields.length;
+        conclusionLabel.textContent = "Вывод";
+        variants.forEach((variant) => {
+          const cell = createCell("td", "", conclusionRow);
+          const input = document.createElement("textarea");
+          input.rows = 3;
+          input.className = "conclusion-input";
+          input.value = variant.conclusion || "";
+          input.setAttribute("aria-label", `Вывод по ${variant.name}`);
+          input.addEventListener("input", () => { variant.conclusion = input.value; });
+          cell.append(input);
+        });
+      }
+
+      function updateVariantLabels() {
+        hardenerHead.querySelectorAll(".variant-label").forEach((label, index) => {
+          label.textContent = variants[index].name;
+        });
+        experimentsHead.querySelectorAll(".variant-label").forEach((label, index) => {
+          label.textContent = `Показатели: ${variants[index].name}`;
+        });
+      }
+
+      function updateHardenerTotals() {
+        variants.forEach((variant) => {
+          const total = hardeners.reduce((sum, item) => sum + (Number(item.values[variant.id]) || 0), 0);
+          const box = hardenerTotals.querySelector(`[data-hardener-variant-id="${variant.id}"]`);
+          if (!box) return;
+          const value = box.querySelector("strong");
+          const status = box.querySelector("span");
+          box.className = "total-box";
+          value.textContent = `${total.toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+          if (Math.abs(total - 100) < 0.0001) {
+            box.classList.add("exact");
+            status.textContent = "100%";
+          } else if (total < 100) {
+            box.classList.add("under");
+            status.textContent = "до 100%";
+          } else {
+            box.classList.add("over");
+            status.textContent = "выше 100%";
+          }
+        });
+      }
+
+      function reorderItem(items, sourceId, targetId, clientY, targetRow, rerender) {
+        const sourceIndex = items.findIndex((item) => String(item.id) === sourceId);
+        const originalTargetIndex = items.findIndex((item) => item.id === targetId);
+        if (sourceIndex < 0 || originalTargetIndex < 0 || sourceIndex === originalTargetIndex) return;
+        const insertAfter = clientY > targetRow.getBoundingClientRect().top + targetRow.offsetHeight / 2;
+        const [item] = items.splice(sourceIndex, 1);
+        let insertIndex = originalTargetIndex + (insertAfter ? 1 : 0);
+        if (sourceIndex < insertIndex) insertIndex -= 1;
+        items.splice(insertIndex, 0, item);
+        rerender();
+      }
+
+      function updateTotals() {
+        const inputsByVariant = variants.map(() => []);
+        tableBody.querySelectorAll("tr:not(.experiment-row)").forEach((row) => {
+          row.querySelectorAll(".percent-cell input").forEach((input, index) => inputsByVariant[index].push(input));
+        });
+        variants.forEach((variant, index) => {
+          const total = inputsByVariant[index].reduce((sum, input) => sum + (Number(input.value) || 0), 0);
+          const box = totalsRow.querySelector(`[data-variant-id="${variant.id}"]`);
+          const value = box.querySelector("strong");
+          const status = box.querySelector("span");
+          box.className = "total-box";
+          value.textContent = `${total.toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+          if (Math.abs(total - 100) < 0.0001) {
+            box.classList.add("exact");
+            status.textContent = "100%";
+          } else if (total < 100) {
+            box.classList.add("under");
+            status.textContent = "до 100%";
+          } else {
+            box.classList.add("over");
+            status.textContent = "выше 100%";
+          }
+        });
+      }
+
+      function textOrZero(value) {
+        return value.trim() === "" ? 0 : value;
+      }
+
+      function numberOrZero(value) {
+        return value === "" ? 0 : Number(value);
+      }
+
+      function serializeComposition(items) {
+        return items.map((item) => ({
+          id: item.id,
+          name: textOrZero(item.name),
+          massPercentByVariant: Object.fromEntries(variants.map((variant) => [
+            variant.id,
+            numberOrZero(item.values[variant.id] || "")
+          ]))
+        }));
+      }
+
+      function compositionTotals(items) {
+        return Object.fromEntries(variants.map((variant) => {
+          const total = items.reduce((sum, item) => sum + numberOrZero(item.values[variant.id] || ""), 0);
+          return [variant.id, Number(total.toFixed(2))];
+        }));
+      }
+
+      function buildExportData() {
+        return {
+          schemaVersion: 1,
+          exportedAt: new Date().toISOString(),
+          product: {
+            name: textOrZero(document.getElementById("product-name").value),
+            purpose: textOrZero(document.getElementById("product-purpose").value)
+          },
+          testConditions: {
+            surfacePreparation: textOrZero(document.getElementById("surface-preparation").value),
+            dryFilmThicknessMicrometers: {
+              min: numberOrZero(document.getElementById("film-min").value),
+              max: numberOrZero(document.getElementById("film-max").value)
+            },
+            curingBeforeTest: {
+              mode: textOrZero(document.getElementById("curing-mode").value),
+              duration: textOrZero(document.getElementById("curing-duration").value)
+            }
+          },
+          variants: variants.map((variant) => ({
+            id: variant.id,
+            name: textOrZero(variant.name),
+            mainCompositionExperiment: textOrZero(variant.experiment),
+            status: textOrZero(variant.status || ""),
+            conclusion: textOrZero(variant.conclusion || "")
+          })),
+          mainComposition: {
+            components: serializeComposition(components),
+            totalMassPercentByVariant: compositionTotals(components)
+          },
+          hardener: {
+            mixingRatioPer100PartsBaseByVariant: Object.fromEntries(variants.map((variant) => [
+              variant.id,
+              numberOrZero(variant.mixingRatio || "")
+            ])),
+            components: serializeComposition(hardeners),
+            totalMassPercentByVariant: compositionTotals(hardeners)
+          },
+          experiments: experiments.map((experiment) => ({
+            id: experiment.id,
+            attribute: textOrZero(experiment.attribute),
+            material: textOrZero(experiment.material),
+            method: textOrZero(experiment.method),
+            standard: textOrZero(experiment.standard),
+            norm: textOrZero(experiment.norm),
+            indicatorsByVariant: Object.fromEntries(variants.map((variant) => [
+              variant.id,
+              textOrZero(experiment.results[variant.id] || "")
+            ]))
+          }))
+        };
+      }
+
+      function isRecord(value) {
+        return value !== null && typeof value === "object" && !Array.isArray(value);
+      }
+
+      function importText(value) {
+        if (value === 0 || value === null || value === undefined) return "";
+        if (typeof value !== "string" && typeof value !== "number") {
+          throw new Error("ожидалось текстовое значение или 0");
+        }
+        return String(value);
+      }
+
+      function importNumber(value, label) {
+        if (value === 0 || value === "" || value === null || value === undefined) return "";
+        const number = Number(value);
+        if (!Number.isFinite(number)) throw new Error(`некорректное число: ${label}`);
+        return String(number);
+      }
+
+      function importId(record, usedIds, label) {
+        const id = Number(record.id);
+        if (!Number.isSafeInteger(id) || id < 1 || usedIds.has(id)) {
+          throw new Error(`некорректный или повторяющийся идентификатор: ${label}`);
+        }
+        usedIds.add(id);
+        return id;
+      }
+
+      function importCompositionRows(rows, variantsToImport, collectionName) {
+        const usedIds = new Set();
+        return rows.map((row, index) => {
+          if (!isRecord(row)) throw new Error(`${collectionName}: строка ${index + 1} имеет неверный формат`);
+          const values = isRecord(row.massPercentByVariant) ? row.massPercentByVariant : {};
+          return {
+            id: importId(row, usedIds, `${collectionName} ${index + 1}`),
+            name: importText(row.name),
+            values: Object.fromEntries(variantsToImport.map((variant) => [
+              variant.id,
+              importNumber(values[variant.id], `${collectionName} ${index + 1}, ${variant.name}`)
+            ]))
+          };
+        });
+      }
+
+      function importData(data) {
+        if (!isRecord(data) || data.schemaVersion !== 1) {
+          throw new Error("неподдерживаемая версия JSON (ожидается schemaVersion: 1)");
+        }
+        if (!isRecord(data.product) || !isRecord(data.testConditions)) {
+          throw new Error("в файле отсутствуют сведения о продукте или условиях испытаний");
+        }
+        const thickness = data.testConditions.dryFilmThicknessMicrometers;
+        const curing = data.testConditions.curingBeforeTest;
+        if (!isRecord(thickness) || !isRecord(curing)) {
+          throw new Error("в файле отсутствуют толщина пленки или параметры отверждения");
+        }
+        if (!Array.isArray(data.variants) || data.variants.length === 0) {
+          throw new Error("в файле должен быть хотя бы один вариант");
+        }
+        if (!isRecord(data.mainComposition) || !Array.isArray(data.mainComposition.components)) {
+          throw new Error("в файле отсутствует основной состав");
+        }
+        if (!isRecord(data.hardener) || !Array.isArray(data.hardener.components)) {
+          throw new Error("в файле отсутствуют компоненты отвердителя");
+        }
+        if (!Array.isArray(data.experiments)) throw new Error("в файле отсутствует список экспериментов");
+
+        const variantIds = new Set();
+        const importedVariants = data.variants.map((variant, index) => {
+          if (!isRecord(variant)) throw new Error(`вариант ${index + 1} имеет неверный формат`);
+          const mixingRatios = isRecord(data.hardener.mixingRatioPer100PartsBaseByVariant)
+            ? data.hardener.mixingRatioPer100PartsBaseByVariant
+            : {};
+          return {
+            id: importId(variant, variantIds, `вариант ${index + 1}`),
+            name: importText(variant.name),
+            experiment: importText(variant.mainCompositionExperiment),
+            status: importText(variant.status),
+            conclusion: importText(variant.conclusion),
+            mixingRatio: importNumber(mixingRatios[variant.id], `смешение отвердителя, ${variant.name}`)
+          };
+        });
+        const importedComponents = importCompositionRows(data.mainComposition.components, importedVariants, "основной состав");
+        const importedHardeners = importCompositionRows(data.hardener.components, importedVariants, "отвердитель");
+        const experimentIds = new Set();
+        const importedExperiments = data.experiments.map((experiment, index) => {
+          if (!isRecord(experiment)) throw new Error(`эксперимент ${index + 1} имеет неверный формат`);
+          const indicators = isRecord(experiment.indicatorsByVariant) ? experiment.indicatorsByVariant : {};
+          return {
+            id: importId(experiment, experimentIds, `эксперимент ${index + 1}`),
+            attribute: importText(experiment.attribute),
+            material: importText(experiment.material),
+            method: importText(experiment.method),
+            standard: importText(experiment.standard),
+            norm: importText(experiment.norm),
+            results: Object.fromEntries(importedVariants.map((variant) => [
+              variant.id,
+              importText(indicators[variant.id])
+            ]))
+          };
+        });
+
+        document.getElementById("product-name").value = importText(data.product.name);
+        document.getElementById("product-purpose").value = importText(data.product.purpose);
+        document.getElementById("surface-preparation").value = importText(data.testConditions.surfacePreparation);
+        document.getElementById("film-min").value = importNumber(thickness.min, "минимальная толщина");
+        document.getElementById("film-max").value = importNumber(thickness.max, "максимальная толщина");
+        document.getElementById("curing-mode").value = importText(curing.mode);
+        document.getElementById("curing-duration").value = importText(curing.duration);
+        variants.splice(0, variants.length, ...importedVariants);
+        components.splice(0, components.length, ...importedComponents);
+        hardeners.splice(0, hardeners.length, ...importedHardeners);
+        experiments.splice(0, experiments.length, ...importedExperiments);
+        nextVariantId = Math.max(...variants.map((variant) => variant.id)) + 1;
+        nextComponentId = Math.max(0, ...components.map((component) => component.id)) + 1;
+        nextHardenerId = Math.max(0, ...hardeners.map((item) => item.id)) + 1;
+        nextExperimentId = Math.max(0, ...experiments.map((experiment) => experiment.id)) + 1;
+        render();
+      }
+
+      function saveBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function timestampedFilename(extension) {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        return `experimental-data-${timestamp}.${extension}`;
+      }
+
+      function downloadJson() {
+        const blob = new Blob([JSON.stringify(buildExportData(), null, 2)], { type: "application/json;charset=utf-8" });
+        saveBlob(blob, timestampedFilename("json"));
+      }
+
+      async function downloadExcel() {
+        try {
+          const response = await fetch("/api/export.xlsx", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(buildExportData())
+          });
+          if (!response.ok) throw new Error(await response.text());
+          saveBlob(await response.blob(), timestampedFilename("xlsx"));
+        } catch (error) {
+          window.alert(`Не удалось экспортировать Excel: ${error.message}`);
+        }
+      }
+
+      function openImportPicker(format) {
+        importFile.accept = format === "excel"
+          ? ".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          : ".json,application/json";
+        document.querySelectorAll(".file-menu").forEach((menu) => { menu.open = false; });
+        importFile.click();
+      }
+
+      document.getElementById("add-component").addEventListener("click", () => {
+        components.push({ id: nextComponentId++, name: "", values: {} });
+        render();
+        tableBody.querySelector(".component-row:last-child .component-name")?.focus();
+      });
+      document.getElementById("add-variant").addEventListener("click", () => {
+        variants.push({ id: nextVariantId, name: `Вариант № ${nextVariantId}`, experiment: "" });
+        nextVariantId += 1;
+        render();
+        tableHead.querySelector("th:last-child input")?.focus();
+      });
+      document.getElementById("add-hardener").addEventListener("click", () => {
+        hardeners.push({ id: nextHardenerId++, name: "", values: {} });
+        renderHardener();
+        hardenerBody.querySelector("tr:last-child .component-name")?.focus();
+      });
+      document.getElementById("add-experiment").addEventListener("click", () => {
+        experiments.push({ id: nextExperimentId++, attribute: "", material: "", method: "", standard: "", norm: "", results: {} });
+        renderExperiments();
+        experimentsBody.querySelector("tr:last-child input")?.focus();
+      });
+      document.getElementById("export-json").addEventListener("click", downloadJson);
+      document.getElementById("export-excel").addEventListener("click", downloadExcel);
+      document.querySelectorAll(".file-menu-items button").forEach((button) => {
+        button.addEventListener("click", () => { button.closest(".file-menu").open = false; });
+      });
+      const fileMenus = [...document.querySelectorAll(".file-menu")];
+      fileMenus.forEach((menu) => {
+        menu.addEventListener("focusout", () => {
+          requestAnimationFrame(() => {
+            if (!menu.contains(document.activeElement)) menu.open = false;
+          });
+        });
+        menu.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            menu.open = false;
+            menu.querySelector("summary").focus();
+          }
+        });
+      });
+      document.addEventListener("pointerdown", (event) => {
+        fileMenus.forEach((menu) => {
+          if (!menu.contains(event.target)) menu.open = false;
+        });
+      });
+      document.getElementById("import-json").addEventListener("click", () => openImportPicker("json"));
+      document.getElementById("import-excel").addEventListener("click", () => openImportPicker("excel"));
+      const importFile = document.getElementById("import-json-file");
+      importFile.addEventListener("change", async (event) => {
+        const input = event.currentTarget;
+        const file = input.files?.[0];
+        if (!file) return;
+        try {
+          if (file.name.toLowerCase().endsWith(".xlsx")) {
+            const response = await fetch("/api/import.xlsx", {
+              method: "POST",
+              headers: { "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+              body: file
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "ошибка чтения Excel");
+            importData(data);
+          } else {
+            importData(JSON.parse(await file.text()));
+          }
+        } catch (error) {
+          window.alert(`Не удалось импортировать файл: ${error.message}`);
+        } finally {
+          input.value = "";
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
